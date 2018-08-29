@@ -1,0 +1,33 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+CONSTRUCT {
+  ?predicate ?a ?b ; a rdf:Property .
+  ?concept   ?c ?d ; a rdfs:Class .
+} 
+FROM <http://example.org/contacts_b>
+FROM <http://example.org/contacts_a>
+WHERE {
+  [] ?x [] . 
+  {?x (rdfs:subPropertyOf|owl:equivalentProperty|^owl:equivalentProperty|owl:sameAs|^owl:sameAs)* ?predicate FILTER(!isBlank(?predicate))}
+  UNION { SERVICE <https://lov.linkeddata.es/dataset/lov/sparql> {?x (rdfs:subPropertyOf|owl:equivalentProperty|^owl:equivalentProperty|owl:sameAs|^owl:sameAs)* ?predicate FILTER(!isBlank(?predicate))}}
+  
+  { 
+	{?predicate (rdfs:range|rdfs:domain) ?y} 
+	UNION { SERVICE <https://lov.linkeddata.es/dataset/lov/sparql> {?predicate (rdfs:range|rdfs:domain) ?y}}
+  } 
+  UNION { [] a ?y } 
+  
+  {?y (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?concept FILTER(!isBlank(?concept))}
+  UNION { SERVICE <https://lov.linkeddata.es/dataset/lov/sparql> {?y (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?concept FILTER(!isBlank(?concept))}}
+  
+  OPTIONAL { 
+    {?predicate ?a ?b} 
+    UNION {SERVICE <https://lov.linkeddata.es/dataset/lov/sparql> {?predicate ?a ?b}} 
+  }
+  OPTIONAL { 
+    {?concept ?c ?d}
+    UNION {SERVICE <https://lov.linkeddata.es/dataset/lov/sparql> {?concept ?c ?d}} 
+  }
+}

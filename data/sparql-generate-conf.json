@@ -1,0 +1,15 @@
+{
+  "documentset": [
+    {
+      "uri": "http://example.org/split_a.csv",
+      "mediatype": "text/csv",
+      "path": "raw/split_a.csv"
+    },
+    {
+      "uri": "http://example.org/split_b.csv",
+      "mediatype": "text/csv",
+      "path": "raw/split_b.csv"
+    }
+  ],
+  "log": "4"
+}

@@ -1,0 +1,21 @@
+CONSTRUCT {
+  ?a ?b ?c; a rdfs:Class.
+  ?d ?e ?f; a rdf:Property.
+} 
+WHERE {
+	{ 
+		SELECT ?a ?b ?c 
+		WHERE { 
+			[] a/(owl:equivalentClass|owl:sameAs|rdfs:subClassOf)* ?a 
+			OPTIONAL { ?a ?b ?c }  
+		} 
+	} 
+	UNION { 
+		SELECT ?d ?e ?f 
+		WHERE { 
+			[] ?x []. 
+			?x (owl:equivalentProperty|owl:sameAs|rdfs:subPropertyOf)* ?d 
+			OPTIONAL { ?d ?e ?f } 
+		} 
+	}
+} 

@@ -1,0 +1,22 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+CONSTRUCT {
+  ?predicate ?a ?b ; a rdf:Property .
+  ?concept   ?c ?d ; a rdfs:Class .
+} 
+FROM <http://example.org/contacts_b>
+FROM <http://example.org/contacts_a>
+FROM <http://schema.org/>
+FROM <http://xmlns.com/foaf/0.1/>
+WHERE {
+  [] ?x [] . 
+  ?x (rdfs:subPropertyOf|owl:equivalentProperty|^owl:equivalentProperty|owl:sameAs|^owl:sameAs)* ?predicate
+  FILTER(!isBlank(?predicate))
+  OPTIONAL { ?predicate ?a ?b }
+  [] a ?y .
+  ?y (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?concept
+  FILTER(!isBlank(?concept))
+  OPTIONAL { ?concept ?c ?d }
+} 

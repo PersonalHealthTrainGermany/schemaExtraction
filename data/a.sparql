@@ -1,0 +1,45 @@
+BASE <http://example.com/> 
+PREFIX iter: <http://w3id.org/sparql-generate/iter/>
+PREFIX fun: <http://w3id.org/sparql-generate/fn/>
+PREFIX wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX fo: <http://www.w3.org/1999/XSL/Format#>
+PREFIX schema: <http://schema.org/>
+
+GENERATE { 
+  <person/{?id}> a foaf:Person;
+    foaf:givenName "{ ?givenName }" ;
+    foaf:familyName "{ ?familyName }" ;
+    foaf:mbox "{ ?email }" ;
+    foaf:phone "{ ?phone }" ;
+    foaf:based_near <address/{?id}> ;
+    foaf:birthday "{ ?birthday }" .
+  
+  <address/{?id}> a schema:PostalAddress ;
+    wgs84_pos:lat "{ ?lat }"^^xsd:decimal ;
+    wgs84_pos:long "{ ?long }"^^xsd:decimal  ;
+    schema:streetAddress "{ ?address }" ;
+    schema:postalCode "{ ?zip }" ;
+    schema:addressLocality "{ ?city }" ;
+    schema:addressRegion "{ ?region }" ;
+    schema:addressCountry "{ ?country }" ;
+}
+SOURCE <http://example.org/split_a.csv> AS ?source
+ITERATOR iter:CSV(?source) AS ?contact
+WHERE {
+    BIND( fun:CSV(?contact, "id" ) AS ?id )
+    BIND( fun:CSV(?contact, "GivenName" ) AS ?givenName )
+    BIND( fun:CSV(?contact, "FamilyName" ) AS ?familyName )
+    BIND( fun:CSV(?contact, "Phone" ) AS ?phone )
+    BIND( fun:CSV(?contact, "Email" ) AS ?email )
+    BIND( fun:CSV(?contact, "Birthdate" ) AS ?birthday )
+    BIND( fun:CSV(?contact, "Company" ) AS ?company )
+    BIND( fun:CSV(?contact, "StreetAddress" ) AS ?address )
+    BIND( fun:CSV(?contact, "City" ) AS ?city )
+    BIND( fun:CSV(?contact, "ZipCode" ) AS ?zip )
+    BIND( fun:CSV(?contact, "Region" ) AS ?region )
+    BIND( fun:CSV(?contact, "Country" ) AS ?country )
+    BIND( fun:CSV(?contact, "Latitude" ) AS ?lat )
+    BIND( fun:CSV(?contact, "Longitude" ) AS ?long )
+}
