@@ -17,6 +17,7 @@ Folder                   | Description
 additionalExperiments    | Resources for additional experiments on Bio2RDF data sets
 apache-jena-fuseki-3.7.0 | A copy of Apache Fuseki
 data                     | The datasets used in the experiments
+evaluationResults        | Short summaries of the evaluation results
 queries                  | The SPARQL queries used for schema extraction
 visualQueryBuilder       | A configured copy of an open source query builder for playing with the extracted schema
 

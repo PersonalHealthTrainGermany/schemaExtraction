@@ -117,6 +117,7 @@ FROM <http://example.org/orphanet>
 } ORDER BY ?s
 ```
 reveals that the authorative vocabulary defines an additional class that itself does not occur in the dataset but is a superclass of the 8 instantiated and (also previously) included classes: 
+
 \#	 | ?s                                    | ?p
 -------: | ------------------------------------- | -------------------------------------
 1	 | <http://bio2rdf.org/orphanet:17949>	 | <http://www.w3.org/2000/01/rdf-schema#subClassOf>

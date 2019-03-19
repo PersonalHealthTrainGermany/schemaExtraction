@@ -87,6 +87,7 @@ triples,entities,distinctSubjects,distinctProperties,distinctObjects,distinctCla
 
 ### SUMMARY
 processing dataset: gendr
+
 What		 | triples	 | entities	 | distinctSubjects	 | distinctProperties	 | distinctObjects	 | distinctClasses	 | distinctLiterals
 ---------------: | --------------| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- 
 dataset		 | 11609	 | 1123		 | 1123		 | 24		 | 1232		 | 13		 | 5158
@@ -96,6 +97,7 @@ locally inferred | 380		 | 37		 | 37		 | 10		 | 16		 | 7		 | 124
 LOV inferred	 | 911		 | 71		 | 71		 | 58		 | 127		 | 12		 | 370
 
 processing dataset: orphanet
+
 What		 | triples	 	 | entities	 | distinctSubjects	 | distinctProperties	 | distinctObjects	 | distinctClasses	 | distinctLiterals
 ---------------: | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- 
 dataset		 | 377947	 | 28871	 | 28871	 | 38		 | 42891	 | 29		 | 144773
@@ -105,6 +107,7 @@ locally inferred | 840		 | 68		 | 68		 | 12		 | 41		 | 7		 | 256
 1380		 | 102		 | 102		 | 59		 | 153		 | 12		 | 506
 
 processing dataset: homologene
+
 What		 | triples	 | entities	 | distinctSubjects	 | distinctProperties	 | distinctObjects	 | distinctClasses	 | distinctLiterals
 ---------------: | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- 
 dataset		 | 7189742	 | 869981	 | 869981	 | 14		 | 1420471	 | 10		 | 2865019
