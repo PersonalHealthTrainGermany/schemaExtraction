@@ -1,0 +1,1 @@
+This folder contains the cleaned up output of executing the scripts `run.sh` and `additionalExperiments.sh`, as well as additional details on the manual validation of the extracted schemata conducted during evaluation.

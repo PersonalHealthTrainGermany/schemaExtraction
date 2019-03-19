@@ -13,7 +13,7 @@ angular.module('VSB.config')
         globalConfig.baseURL = 'http://localhost:3030/ds/sparql';
         globalConfig.resultURL = globalConfig.baseURL;
         globalConfig.endPointQueries = Object.assign(globalConfig.endPointQueries, {
-				    getDirectProperties: '<%uri%> (rdfs:subClassOf )* ?class .' +
+				    getDirectProperties: '<%uri%> (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?class .' +
 				        '{?uri rdfs:domain ?class} UNION {?uri schema:domainIncludes ?class} .' +
 				        'OPTIONAL { {?uri rdfs:range ?range} UNION {?uri schema:rangeIncludes ?range} }  .' +
 				        'OPTIONAL { ?uri rdf:type ?type }  .' +
@@ -27,16 +27,16 @@ angular.module('VSB.config')
 				        'OPTIONAL { ?uri rdfs:label ?label . BIND(LANG(?label) AS ?label_loc) } .' +
 				        'OPTIONAL { ?uri rdfs:comment ?comment . BIND(LANG(?comment) AS ?comment_loc) } .' +
 				        'FILTER ( !isBlank(?class) && !isBlank(?uri) && !isBlank(?range) ) ',
-				    getSuperAndEqClasses: '<%uri%> (rdfs:subClassOf|(owl:equivalentClass|^owl:equivalentClass))* ?uri ' +
+				    getSuperAndEqClasses: '<%uri%> (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?uri ' +
 				        'FILTER ( !isBlank(?uri) )',
-				    getSubAndEqClasses: '<%uri%> (^rdfs:subClassOf|(owl:equivalentClass|^owl:equivalentClass))* ?uri ' +
+				    getSubAndEqClasses: '<%uri%> (^rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?uri ' +
 				        'FILTER ( !isBlank(?uri) )',
-				    getAvailableClasses: '{?uri a rdfs:Class .} UNION {?uri a owl:Class .} .' +
+				    getAvailableClasses: '{?uri a rdfs:Class} UNION {?uri a owl:Class} .' +
 				        'FILTER ( !isBlank(?uri) )' +
 				        'OPTIONAL { ?uri rdfs:label ?label . BIND(LANG(?label) AS ?label_loc) } .' +
 				        'OPTIONAL { ?uri rdfs:comment ?comment . BIND(LANG(?comment) AS ?comment_loc)} ',
-				    getPossibleRelation: '<%uri1%> (rdfs:subClassOf|(owl:equivalentClass|^owl:equivalentClass))* ?class1 .' +
-                '<%uri2%> (rdfs:subClassOf|(owl:equivalentClass|^owl:equivalentClass))* ?class2 .' +
+				    getPossibleRelation: '<%uri1%> (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?class1 .' +
+                '<%uri2%> (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?class2 .' +
                 '{ ' +
                 '?uri (rdfs:domain|schema:domainIncludes) ?class1 . ' +
                 '?uri (rdfs:range|schema:rangeIncludes) ?class2  .' +
