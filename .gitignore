@@ -2,3 +2,6 @@
 *.log
 run/
 data/lov.nq
+additionalExperiments/*.ttl
+additionalExperiments/data/*
+!additionalExperiments/data/getData.sh

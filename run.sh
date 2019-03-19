@@ -73,8 +73,8 @@ sleep 8s
 
 log "Creating LOV terminology server (local copy of the Linked Open Vocabularies project)"
 curl -d "dbName=terminology&dbType=mem" -X POST "http://localhost:3030/$/datasets"
-curl -X POST -H "Content-Type: application/n-quads" -d @data/lov.nq ${HOST}/terminology
-log "Loaded LOV data into terminology store"
+log "Loading LOV data into terminology store"
+curl -X POST -H "Content-Type: application/n-quads" -T data/lov.nq -# ${HOST}/terminology > /dev/null
 rlog "`terminologyStats`"
 
 log "Loading datasets into Fuseki store"
@@ -97,22 +97,22 @@ rlog "`localStats "http://xmlns.com/foaf/0.1/"`"
 
 
 log "Extracting schemata from graph..."
-#time ${FBIN}/s-query --service ${HOST}/ds/query --query query/schema.sparql > schema.ttl
+#time ${FBIN}/s-query --service ${HOST}/ds/query --query queries/schema.sparql > schema.ttl
 
 log "Locally instantiated schema..."
-time ${FBIN}/s-query --service ${HOST}/ds/query --query query/schema1_optimized.sparql > locallyInstantiated.ttl
+time ${FBIN}/s-query --service ${HOST}/ds/query --query queries/schema1_optimized.sparql > locallyInstantiated.ttl
 ${FBIN}/s-put ${HOST}/ds/data http://example.org/locallyInstantiated locallyInstantiated.ttl
 rlog "`localStats "http://example.org/locallyInstantiated"`"
 
-#time ${FBIN}/s-query --service ${HOST}/ds/query --query schema2_optimized.sparql > s2.ttl
+#time ${FBIN}/s-query --service ${HOST}/ds/query --query queries/schema2_optimized.sparql > s2.ttl
 
 log "Locally inferred schema..."
-time ${FBIN}/s-query --service ${HOST}/ds/query --query query/schema3_optimized.sparql > locallyInferred.ttl
+time ${FBIN}/s-query --service ${HOST}/ds/query --query queries/schema3_optimized.sparql > locallyInferred.ttl
 ${FBIN}/s-put ${HOST}/ds/data http://example.org/locallyInferred locallyInferred.ttl
 rlog "`localStats "http://example.org/locallyInferred"`"
 
 log "Schema inferred using LOV..."
-time ${FBIN}/s-update --service ${HOST}/ds/update --update query/multistep.sparql
+time ${FBIN}/s-update --service ${HOST}/ds?update --update queries/multistep.sparql
 ${FBIN}/s-query --service ${HOST}/ds/query 'CONSTRUCT {?s ?p ?o} FROM <http://example.org/LOVInferred> {?s ?p ?o}' > LOVInferred.ttl
 rlog "`localStats "http://example.org/LOVInferred"`"
 
@@ -123,7 +123,7 @@ rlog "`localStats "http://example.org/LOVInferred"`"
 ##log "Schema endpoint available as named graph $graph"
 #log "`localStats "$graph"`"
 
-#time ${FBIN}/s-query --service ${HOST}/ds --query query/multistep.sparql
+#time ${FBIN}/s-query --service ${HOST}/ds --query queries/multistep.sparql
 
 rlog "\nCombined stats:\n"
 rlog "`localStats "http://schema.org/"`"

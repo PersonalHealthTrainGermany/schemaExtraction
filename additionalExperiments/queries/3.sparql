@@ -1,0 +1,85 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Delete any leftovers of previous schemata
+DROP GRAPH <http://example.org/LOVInferred>;
+
+# Find all predicates used in the current dataset and their equivalents and generalizations
+INSERT { GRAPH <http://example.org/LOVInferred> {
+  ?predicate a rdf:Property; 
+    rdfs:domain ?pDomain; 
+    rdfs:range ?pRange.
+}}
+USING <${GRAPH}>
+WHERE {
+  {
+    {SELECT DISTINCT ?x ?pDomain ?pRange { 
+      ?s ?x ?o.
+      OPTIONAL { ?s a ?pDomain}
+      OPTIONAL { ?o a ?pRange}
+    }}
+    ?x (rdfs:subPropertyOf|owl:equivalentProperty|^owl:equivalentProperty|owl:sameAs|^owl:sameAs)* ?predicate FILTER(!isBlank(?predicate))
+  } UNION { 
+    {SELECT DISTINCT ?x {[] ?x []}}
+    SERVICE <http://terminology:3030/terminology/sparql> {GRAPH ?g {
+        ?x (rdfs:subPropertyOf|owl:equivalentProperty|^owl:equivalentProperty|owl:sameAs|^owl:sameAs)* ?predicate FILTER(!isBlank(?predicate))
+      }}
+  }
+};
+
+# Find all classes used in the current dataset or implied through entailment
+INSERT { GRAPH <http://example.org/LOVInferred> {
+  ?y a rdfs:Class
+}}
+USING <${GRAPH}>
+USING NAMED <http://example.org/LOVInferred>
+WHERE {
+  { 
+    SELECT DISTINCT ?y {[] a ?y FILTER(!isBlank(?y))} 
+  } UNION { 
+    {SELECT DISTINCT ?y {
+      GRAPH <http://example.org/LOVInferred> { ?predicate a rdf:Property }
+      ?predicate (rdfs:range|rdfs:domain) ?y FILTER(!isBlank(?y))
+    }} UNION {SELECT DISTINCT ?y {
+      GRAPH <http://example.org/LOVInferred> { ?predicate a rdf:Property }
+      SERVICE <http://terminology:3030/terminology/sparql> {GRAPH ?h {
+          ?predicate (rdfs:range|rdfs:domain) ?y FILTER(!isBlank(?y))
+        }}
+    }}
+  }
+};
+
+# Find all class equivalences implied through entailment
+INSERT { GRAPH <http://example.org/LOVInferred> {
+  ?concept a rdfs:Class
+}}
+USING <${GRAPH}>
+USING NAMED <http://example.org/LOVInferred>
+WHERE {
+  {
+    GRAPH <http://example.org/LOVInferred> { ?y a rdfs:Class }
+    ?y (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)+ ?concept FILTER(!isBlank(?concept))
+  } UNION { 
+    GRAPH <http://example.org/LOVInferred> { ?y a rdfs:Class }
+    SERVICE <http://terminology:3030/terminology/sparql> {GRAPH ?i {
+      ?y (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)+ ?concept FILTER(!isBlank(?concept))
+    }}
+  }
+};
+
+# Find describing information of previously discovered classes and predicates
+INSERT { GRAPH <http://example.org/LOVInferred> {
+  ?s ?p ?o
+}}
+USING <${GRAPH}>
+USING NAMED <http://example.org/LOVInferred>
+WHERE {
+  { 
+    {GRAPH <http://example.org/LOVInferred> {?s a rdf:Property}} UNION {GRAPH <http://example.org/LOVInferred> {?s a rdfs:Class}}
+    ?s ?p ?o 
+  } UNION { 
+    {GRAPH <http://example.org/LOVInferred> {?s a rdf:Property}} UNION {GRAPH <http://example.org/LOVInferred> {?s a rdfs:Class}}
+    SERVICE <http://terminology:3030/terminology/sparql> {GRAPH ?j { ?s ?p ?o }} 
+  }
+};

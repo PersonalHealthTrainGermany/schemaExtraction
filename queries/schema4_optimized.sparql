@@ -1,0 +1,43 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+CONSTRUCT {
+  ?predicate ?a ?b; a rdf:Property; rdfs:domain ?pDomain; rdfs:range ?pRange.
+  ?concept   ?c ?d; a rdfs:Class.
+} 
+FROM <http://example.org/contacts_b>
+FROM <http://example.org/contacts_a>
+WHERE {
+  {
+    SELECT DISTINCT ?p {
+      {SELECT DISTINCT ?x ?pDomain ?pRange { 
+          ?s ?x ?o.
+          OPTIONAL { ?s a ?pDomain}
+          OPTIONAL { ?o a ?pRange}
+      }}
+      {?x (rdfs:subPropertyOf|owl:equivalentProperty|^owl:equivalentProperty|owl:sameAs|^owl:sameAs)* ?p FILTER(!isBlank(?p))}
+      UNION { SERVICE <http://localhost:3030/terminology/sparql> {GRAPH ?g {?x (rdfs:subPropertyOf|owl:equivalentProperty|^owl:equivalentProperty|owl:sameAs|^owl:sameAs)* ?p FILTER(!isBlank(?p))}}}
+    }
+  }
+  BIND (?p AS ?predicate)
+  
+  { SELECT DISTINCT ?y {[] a ?y} } 
+  UNION { 	    
+    {?predicate (rdfs:range|rdfs:domain) ?y}
+    UNION { SERVICE <http://localhost:3030/terminology/sparql> {GRAPH ?h {?predicate (rdfs:range|rdfs:domain) ?y} }}
+  }
+  BIND (?y AS ?z)
+
+  {?z (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?concept FILTER(!isBlank(?concept))}
+	UNION { SERVICE <http://localhost:3030/terminology/sparql> {GRAPH ?i {?z (rdfs:subClassOf|owl:sameAs|^owl:sameAs|owl:equivalentClass|^owl:equivalentClass)* ?concept FILTER(!isBlank(?concept))}}}
+    
+  OPTIONAL { 
+    {?predicate ?a ?b} 
+    UNION {SERVICE <http://localhost:3030/terminology/sparql> {GRAPH ?j {?predicate ?a ?b}}}
+  }
+  OPTIONAL { 
+    {?concept ?c ?d}
+    UNION {SERVICE <http://localhost:3030/terminology/sparql> {GRAPH ?k {?concept ?c ?d}}}
+  }
+}
